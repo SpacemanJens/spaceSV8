@@ -13,7 +13,8 @@ let imagesLoaded = 0; // Counter to track loaded images
 let totalNumberOfPlanets = 5;
 
 //let totalImages = 778;
-let totalImages = 854; 
+//let totalImages = 854; 
+let totalImages = 145; 
 let animationReady = false;
 
 const detailsLevel = {
@@ -27,7 +28,7 @@ const detailsLevel = {
 const screenLayout = {
   screenWidth: 2400, // 2400
   screenHeight: 1200, // 1200
-  startPlanetIndex: 3,
+  startPlanetIndex: 0,
   diameterPlanet: 3000, //3838,  // 1500/3838 Must be the same as the actual size of the background image found in preload()
   cropWidth: 1200, // 1800
   cropHeight: 700, // 1200
@@ -168,7 +169,7 @@ function generateTowers(count) {
 }
 //s
 function preload() {
-  partyConnect("wss://p5js-spaceman-server-29f6636dfb6c.herokuapp.com", "jkv-spaceSV6l1");
+  partyConnect("wss://p5js-spaceman-server-29f6636dfb6c.herokuapp.com", "jkv-spaceSV6l2");
 
   shared = partyLoadShared("shared", {
     gameObjects: [],  // Start with empty array
@@ -194,7 +195,8 @@ function preload() {
 
     minimapImg[i] = loadImage(`images/planetA/planetAminimap/planetA_${i}.png`);
   }*/
-    minimapImageA = loadImage(`images/planet0/minimap/planetA_624.png`);
+//    minimapImageA = loadImage(`images/planet0/minimap/planetA_624.png`);
+    minimapImageA = loadImage(`images/planet0/minimap/planetA_0.png`);
 
     minimapImage = loadImage(`images/planet0/planet0minimapWithWarpGate.png`);
   //  minimapNightImage = loadImage(`images/background/bgMinimapNight.png`);
