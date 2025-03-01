@@ -7,14 +7,20 @@ let solarSystem;
 let selectedPlanet
 let backgroundStarsManager;
 let flightImages = [];
-let minimapImg = [];
-let minimapStillImg = [];
+let minimapImg = []; // jenskh
+
 let imagesLoaded = 0; // Counter to track loaded images
 let totalNumberOfPlanets = 5;
+let totalImagesPerPlanet = [145, 151, 75, 251, 125]; // Number of frames for each planet
+
+// Add these variables for debugging and tracking
+let totalExpectedImages = 0;
+let loadedCounts = [0, 0, 0, 0, 0]; // Track loading progress for each planet
+let debugFrameCount = 0;
 
 //let totalImages = 778;
 //let totalImages = 854; 
-let totalImages = 145; 
+//let totalImages = 145; 
 let animationReady = false;
 
 const detailsLevel = {
@@ -65,31 +71,56 @@ let activeFlights = [];
 const playerColors = ['green', 'blue', 'red', 'yellow', 'purple', 'orange', 'pink', 'brown', 'cyan', 'magenta', 'lime', 'teal', 'lavender', 'maroon', 'olive']
 
 function loadFrames() {
-  loadNextBatch(); // Start batch loading
+  // Reset counters before loading
+  imagesLoaded = 0;
+  loadedCounts = [0, 0, 0, 0, 0];
+  
+  for (let planetIndex = 0; planetIndex < totalNumberOfPlanets; planetIndex++) {
+    loadFramesForPlanet(planetIndex);
+  }
 }
 
-function loadNextBatch() {
+function loadFramesForPlanet(planetIndex) {
+  let batchIndex = 0; // Reset batchIndex for each planet
+  loadNextBatchForPlanet(planetIndex, batchIndex);
+}
+
+function loadNextBatchForPlanet(planetIndex, batchIndex) {
+  let totalFrames = totalImagesPerPlanet[planetIndex];
   let start = batchIndex * batchSize;
-  let end = Math.min(start + batchSize, totalImages); // Prevent out-of-bounds
+  let end = Math.min(start + batchSize, totalFrames);
 
-  console.log(`Loading frames ${start} to ${end - 1}`);
+  // Only proceed if we have more frames to load
+  if (start < totalFrames) {
+    console.log(`Loading frames ${start} to ${end - 1} for planet ${planetIndex}`);
 
-  for (let i = start; i < end; i++) {
-    minimapImg[i] = loadImage(`images/planet0/minimap/planetA_${i}.png`, imageLoaded);
-//    frames[i] = loadImage(`https://spacemanjens.github.io/spaceSV5/images/planetA/frames/frame_${i}.png`, imageLoaded);
-  }
+    for (let i = start; i < end; i++) {
+      minimapImg[planetIndex][i] = loadImage(
+        `images/planet${planetIndex}/minimap/planetA_${i}.png`, 
+        () => imageLoaded(planetIndex)
+      );
+    }
 
-  batchIndex++;
-
-  // If more images remain, load the next batch after a short delay
-  if (batchIndex * batchSize < totalImages) {
-    setTimeout(loadNextBatch, 300); // Delay of 300ms before next batch
+    // Schedule next batch only if there are more frames to load
+    if (end < totalFrames) {
+      setTimeout(() => loadNextBatchForPlanet(planetIndex, batchIndex + 1), 300);
+    }
   }
 }
 
-function imageLoaded() {
+// Track loaded images per planet
+function imageLoaded(planetIndex) {
   imagesLoaded++;
-  if (imagesLoaded === totalImages) {
+  loadedCounts[planetIndex]++;
+  
+  // Log progress every 20 images
+  if (imagesLoaded % 20 === 0) {
+    console.log(`Loading progress: ${imagesLoaded}/${totalExpectedImages} images loaded`);
+    console.log(`Planet progress: [${loadedCounts.join(', ')}]`);
+  }
+  
+  // Check if all images are loaded
+  if (imagesLoaded >= totalExpectedImages) {
     animationReady = true;
     console.log("All images loaded! Starting animation...");
   }
@@ -97,7 +128,14 @@ function imageLoaded() {
 
 function setup() {
   createCanvas(screenLayout.screenWidth, screenLayout.screenHeight);
-
+  
+  // Initialize the 2D array for minimapImg
+  minimapImg = Array(totalNumberOfPlanets).fill().map(() => []);
+  
+  // Calculate total expected images
+  totalExpectedImages = totalImagesPerPlanet.reduce((sum, count) => sum + count, 0);
+  console.log(`Total expected images: ${totalExpectedImages}`);
+  
   loadFrames()
 /*
   for (let i = 0; i < totalImages; i++) {
@@ -212,6 +250,15 @@ function preload() {
 
 function draw() {
 
+  // Debug loading status every 60 frames
+  debugFrameCount++;
+  if (debugFrameCount >= 60) {
+    debugFrameCount = 0;
+    if (!animationReady) {
+      console.log(`Still loading: ${imagesLoaded}/${totalExpectedImages} (${Math.floor(imagesLoaded/totalExpectedImages*100)}%)`);
+    }
+  }
+  
   if (!meHost && partyIsHost()) {
     meHost = true;
     updateTowerCount();

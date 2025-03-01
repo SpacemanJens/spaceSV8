@@ -406,6 +406,7 @@ class Flight {
       this.diameterPlanet = diameterPlanet;
       this.size = this.baseSize;
       this.i = startImageNumber;
+      this.planetIndex = 0; // Will be set in SolarSystem constructor
     }
   
     update(speedMultiplier, planetSpeed) {
@@ -415,14 +416,22 @@ class Flight {
     draw() {
       if (detailsLevel.showStarPlanetImages) {
   
-        if (animationReady) {
-          if (frameCount % 3 === 0) {
+        if (animationReady) { 
+          if (frameCount % 40 === 0) {
             this.i++;
+            // Use the correct frame count for this planet
+            if (this.i >= totalImagesPerPlanet[this.planetIndex]) {
+              this.i = 0;
+            }
           }
-          if (this.i === totalImages) {
-            this.i = 0;
+          
+          // Use this planet's images from the 2D array
+          if (minimapImg[this.planetIndex] && minimapImg[this.planetIndex][this.i]) {
+            image(minimapImg[this.planetIndex][this.i], this.x, this.y, this.size, this.size);
+          } else {
+            // Fallback if image not loaded
+            image(minimapImageA, this.x, this.y, this.size, this.size);
           }
-          image(minimapImg[this.i], this.x, this.y, this.size, this.size);
         } else {
           image(minimapImageA, this.x, this.y, this.size, this.size);
         }
@@ -499,15 +508,20 @@ class Flight {
       // constructor(angle, baseSpeed, distance, tiltEffect, baseSize, color {
       this.planets = [
         //      new Planet(10, 0.7, 400, 0.05, 40, [0, 102, 204]),
-        new Planet(10, 0.7, 400, 0.05, 1000, [0, 102, 204], 0),
-        new Planet(90, 0.5, 700, 0.08, 2000, [0, 122, 174], 0),
-        new Planet(190, 0.4, 1100, 0.04, 3000, [0, 142, 144], 0),
-        new Planet(270, 0.3, 1400, 0.06, 2500, [0, 162, 114], 0),
-        new Planet(350, 0.25, 1800, 0.03, 3000, [0, 182, 84], 0)
+        new Planet(10, 0.7, 400, 0.05, 3000, [0, 102, 204], 0),
+        new Planet(90, 0.5, 700, 0.08, 3500, [0, 122, 174], 0),
+        new Planet(190, 0.4, 1100, 0.04, 5000, [0, 142, 144], 0),
+        new Planet(270, 0.3, 1400, 0.06, 4000, [0, 162, 114], 0),
+        new Planet(350, 0.25, 1800, 0.03, 3500, [0, 182, 84], 0)
       ];
   
       this.blackHole = new BlackHole(75, 5);
       this.yellowStar = new YellowStar(300, 1);
+
+      // Assign planetIndex to each planet
+      this.planets.forEach((planet, index) => {
+        planet.planetIndex = index;
+      });
     }
   
     update() {
