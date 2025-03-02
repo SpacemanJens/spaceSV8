@@ -193,7 +193,7 @@ function generateTowers(count) {
     const x = screenLayout.diameterPlanet / 2 + radius * cos(angle);
     const y = screenLayout.diameterPlanet / 2 + radius * sin(angle);
 
-    d.push(new Canon({
+    towers.push(new Canon({
       objectNumber: i,
       objectName: `canon${i}`,
       xGlobal: x,
@@ -207,8 +207,8 @@ function generateTowers(count) {
   return towers;
 }
 //s
-function preload() { 
-  partyConnect("wss://p5js-spaceman-server-29f6636dfb6c.herokuapp.com", "jkv-spaceSV8P2");
+function preload() {
+  partyConnect("wss://p5js-spaceman-server-29f6636dfb6c.herokuapp.com", "jkv-spaceSV8P3");
 
   shared = partyLoadShared("shared", {
     gameObjects: [],  // Start with empty array
