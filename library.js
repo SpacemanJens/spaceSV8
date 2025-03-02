@@ -104,7 +104,7 @@ class Flight {
       canonHits = shared.canonTowerHits ? -shared.canonTowerHits[this.playerNumber] : 0;
     }
 
-    text(this.playerName + " (My hits: " + playerHits + ", Hit by others: " + hitByOthers * -1 + ", Hit by canon towers: " + canonHits + ")", 20, offSetY);
+    text(this.playerName + " (My hits: " + playerHits + ", Hit by others: " + hitByOthers * -1 + ", Hit by canons: " + canonHits + ") - Planet: " + this.planetIndex, 20, offSetY);
 
   }
 

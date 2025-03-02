@@ -417,7 +417,7 @@ function keyPressed() {
     me.planetIndex = 4;
   }
 
-  if (keyCode === 80) { // p
+  if (keyCode === 80) { // p 
     detailsLevel.showStarSystem = !detailsLevel.showStarSystem;
   }
   if (keyCode === 79) { // o
